@@ -1,0 +1,6 @@
+<launch>
+    <node name="message_waiter_node" pkg="message_waiter" type="message_waiter_node" output="screen">
+        <param name="topic_name" value="your_topic" />
+        <param name="command_to_run" value="your_command" />
+    </node>
+</launch>

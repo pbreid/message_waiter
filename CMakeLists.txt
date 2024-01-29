@@ -32,3 +32,7 @@ target_link_libraries(message_waiter_node
 install(TARGETS message_waiter_node
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
+
+install(DIRECTORY launch
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
