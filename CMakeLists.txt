@@ -28,3 +28,7 @@ add_executable(message_waiter_node src/message_waiter.cpp)
 target_link_libraries(message_waiter_node
   ${catkin_LIBRARIES}
 )
+
+install(TARGETS message_waiter_node
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
