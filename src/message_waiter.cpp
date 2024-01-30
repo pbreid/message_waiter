@@ -1,5 +1,5 @@
 #include <ros/ros.h>
-#include <topic_tools/ShapeShifter.h>
+#include <topic_tools/shape_shifter.h>
 
 bool message_received = false;
 
