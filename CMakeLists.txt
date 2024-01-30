@@ -10,12 +10,13 @@ project(message_waiter)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
+  topic_tools
 )
 
 catkin_package(
   # INCLUDE_DIRS include
   # LIBRARIES message_waiter
-  CATKIN_DEPENDS roscpp std_msgs
+  CATKIN_DEPENDS roscpp std_msgs topic_tools
   # DEPENDS system_lib
 )
 

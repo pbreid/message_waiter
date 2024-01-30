@@ -1,13 +1,10 @@
 #include <ros/ros.h>
-#include <std_msgs/String.h>
-#include <string>
+#include <topic_tools/shape_shifter.h>
 
 bool message_received = false;
-std::string command_to_run;
-std::string topic_to_listen;
 
-void chatterCallback(const std_msgs::String::ConstPtr& msg) {
-    ROS_INFO("Received: [%s]", msg->data.c_str());
+void chatterCallback(const topic_tools::ShapeShifter::ConstPtr& msg) {
+    ROS_INFO("Message received on topic");
     message_received = true;
 }
 
@@ -20,10 +17,10 @@ int main(int argc, char **argv) {
         return -1;
     }
 
-    topic_to_listen = argv[1];
-    command_to_run = argv[2];
+    std::string topic_to_listen = argv[1];
+    std::string command_to_run = argv[2];
 
-    ros::Subscriber sub = nh.subscribe(topic_to_listen, 1000, chatterCallback);
+    ros::Subscriber sub = nh.subscribe(topic_to_listen, 1, chatterCallback);
 
     ros::Rate loop_rate(1);
     while (ros::ok() && !message_received) {
