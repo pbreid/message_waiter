@@ -4,43 +4,45 @@
 #include <sstream>
 #include <map>
 
-std::vector<std::string> split(const std::string &s, char delimiter)
-{
+std::vector<ros::Subscriber> subscribers; // Global vector to hold subscribers
+std::map<std::string, bool> message_received_map;
+
+void chatterCallback(const topic_tools::ShapeShifter::ConstPtr& msg, const std::string& topic) {
+    ROS_INFO("Message received on topic: %s", topic.c_str());
+    message_received_map[topic] = true;
+
+    // Find and remove the subscriber for this topic
+    for (auto &sub : subscribers) {
+        if (sub.getTopic() == topic || ("/" + sub.getTopic()) == topic) {
+            sub.shutdown();
+            break;
+        }
+    }
+}
+
+std::vector<std::string> split(const std::string &s, char delimiter) {
     std::vector<std::string> tokens;
     std::string token;
     std::istringstream tokenStream(s);
-    while (std::getline(tokenStream, token, delimiter))
-    {
+    while (std::getline(tokenStream, token, delimiter)) {
         tokens.push_back(token);
     }
     return tokens;
 }
 
-std::map<std::string, bool> message_received_map;
-
-void chatterCallback(const topic_tools::ShapeShifter::ConstPtr &msg, const std::string &topic)
-{
-    ROS_INFO("Message received on topic: %s", topic.c_str());
-    message_received_map[topic] = true;
-}
-
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
     ros::init(argc, argv, "message_waiter");
     ros::NodeHandle nh;
 
-    if (argc != 3)
-    {
+    if (argc != 3) {
         ROS_ERROR("Usage: message_waiter <topics> <command>");
         return -1;
     }
 
     std::vector<std::string> topics = split(argv[1], ',');
     std::string command_to_run = argv[2];
-    std::vector<ros::Subscriber> subscribers; // Vector to hold subscribers
 
-    for (const std::string &topic : topics)
-    {
+    for (const std::string& topic : topics) {
         message_received_map[topic] = false;
         subscribers.push_back(nh.subscribe<topic_tools::ShapeShifter>(topic, 1, boost::bind(chatterCallback, _1, topic)));
     }
