@@ -2,6 +2,7 @@
 #include <topic_tools/shape_shifter.h>
 #include <vector>
 #include <sstream>
+#include <map>
 
 std::vector<std::string> split(const std::string &s, char delimiter) {
     std::vector<std::string> tokens;
@@ -31,11 +32,13 @@ int main(int argc, char **argv) {
 
     std::vector<std::string> topics = split(argv[1], ',');
     std::string command_to_run = argv[2];
+    std::vector<ros::Subscriber> subscribers; // Vector to hold subscribers
 
     for (const std::string& topic : topics) {
-        message_received_map[topic] = false; // Initialize the map
-        ros::Subscriber sub = nh.subscribe<topic_tools::ShapeShifter>(topic, 1, boost::bind(chatterCallback, _1, topic));
+        message_received_map[topic] = false;
+        subscribers.push_back(nh.subscribe<topic_tools::ShapeShifter>(topic, 1, boost::bind(chatterCallback, _1, topic)));
     }
+
 
     ros::Rate loop_rate(1);
     bool all_received = false;
