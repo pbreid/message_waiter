@@ -1,10 +1,9 @@
 #include <ros/ros.h>
-#include <std_msgs/String.h>
-#include <string>
+#include <topic_tools/ShapeShifter.h>
 
 bool message_received = false;
 
-void chatterCallback(const std_msgs::String::ConstPtr& msg) {
+void chatterCallback(const topic_tools::ShapeShifter::ConstPtr& msg) {
     ROS_INFO("Message received on topic");
     message_received = true;
 }
@@ -13,27 +12,15 @@ int main(int argc, char **argv) {
     ros::init(argc, argv, "message_waiter");
     ros::NodeHandle nh;
 
-    std::string topic_to_listen;
-    std::string command_to_run;
-
-    if (argc == 3) {
-        // Command line arguments are provided
-        topic_to_listen = argv[1];
-        command_to_run = argv[2];
-    } else {
-        // Read parameters from parameter server
-        if (!nh.getParam("topic", topic_to_listen)) {
-            ROS_ERROR("Failed to get param 'topic'");
-            return -1;
-        }
-
-        if (!nh.getParam("command", command_to_run)) {
-            ROS_ERROR("Failed to get param 'command'");
-            return -1;
-        }
+    if (argc != 3) {
+        ROS_ERROR("Usage: message_waiter <topic> <command>");
+        return -1;
     }
 
-    ros::Subscriber sub = nh.subscribe(topic_to_listen, 1000, chatterCallback);
+    std::string topic_to_listen = argv[1];
+    std::string command_to_run = argv[2];
+
+    ros::Subscriber sub = nh.subscribe(topic_to_listen, 1, chatterCallback);
 
     ros::Rate loop_rate(1);
     while (ros::ok() && !message_received) {
